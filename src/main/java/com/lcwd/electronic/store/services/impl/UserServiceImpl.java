@@ -2,6 +2,7 @@ package com.lcwd.electronic.store.services.impl;
 
 import com.lcwd.electronic.store.dtos.UserDto;
 import com.lcwd.electronic.store.entities.User;
+import com.lcwd.electronic.store.exceptions.ResourceNotFoundException;
 import com.lcwd.electronic.store.repositories.UserRepository;
 import com.lcwd.electronic.store.services.UserService;
 import org.modelmapper.ModelMapper;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto, String userId)  {
-        User user = (User)userRepository.findById(userId).orElseThrow(()-> new RuntimeException("user not found exception"));
+        User user = (User)userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("user not found exception"));
         user.setName(userDto.getName());
         //update email
         user.setAbout(userDto.getAbout());
@@ -54,7 +55,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String userId)  {
 
-        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found"));
         userRepository.delete(user);
 
     }
@@ -68,13 +69,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(String userId)  {
-        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("user not found"));
+        User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("user not found"));
         return entityToDto(user);
     }
 
     @Override
     public UserDto getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found with this email"));
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new ResourceNotFoundException("User not found with this email"));
         return  entityToDto(user);
     }
 
