@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,22 +30,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto, String userId) {
-        return null;
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("user not found exception"));
+        user.setName(userDto.getName());
+        //update email
+        user.setAbout(userDto.getAbout());
+        user.setPassword(userDto.getPassword());
+        user.setGender(userDto.getGender());
+        user.setImageName(userDto.getImageName());
+
+        //save data
+        User updatedUser = (User) userRepository.save(user);
+        UserDto updatedDto = entityToDto(updatedUser);
+        return updatedDto;
+
     }
 
     @Override
     public void deleteUser(String userId) {
 
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
+        userRepository.delete(user);
+
     }
 
     @Override
     public List<UserDto> getAllUser() {
-        return null;
+       List<User> users = userRepository.findAll();
+       List<UserDto> dtolist = users.stream().map(user -> entityToDto(user)).collect(Collectors.toList());
+       return dtolist;
     }
 
     @Override
     public UserDto getUserById(String userId) {
-        return null;
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
+        return entityToDto(user);
     }
 
     @Override
