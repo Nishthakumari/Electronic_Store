@@ -35,8 +35,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDto updateUser(UserDto userDto, String userId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("user not found exception"));
+    public UserDto updateUser(UserDto userDto, String userId)  {
+        User user = (User)userRepository.findById(userId).orElseThrow(()-> new RuntimeException("user not found exception"));
         user.setName(userDto.getName());
         //update email
         user.setAbout(userDto.getAbout());
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String userId) {
+    public void deleteUser(String userId)  {
 
         User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
         userRepository.delete(user);
@@ -67,8 +67,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
+    public UserDto getUserById(String userId)  {
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("user not found"));
         return entityToDto(user);
     }
 

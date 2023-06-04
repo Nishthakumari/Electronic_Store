@@ -8,8 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
@@ -17,7 +20,7 @@ public class UserController {
 
     //create
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody  UserDto userDto){
+    public ResponseEntity<UserDto> createUser(@RequestBody  @Valid UserDto userDto){
         UserDto userDto1 = userService.createUser(userDto);
         return new ResponseEntity<>(userDto1, HttpStatus.CREATED);
     }
@@ -29,7 +32,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateUser(
 
             @PathVariable ("userId") String userId,
-            @RequestBody UserDto userDto){
+            @RequestBody @Valid  UserDto userDto) {
 
         UserDto updatedUserDto = userService.updateUser(userDto, userId);
         return new  ResponseEntity<>(updatedUserDto, HttpStatus.OK);
@@ -38,12 +41,12 @@ public class UserController {
 
     //delete
     @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable ("userId") String userId)
-    {
+    public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable ("userId") String userId) throws Throwable {
         userService.deleteUser(userId);
         ApiResponseMessage message = ApiResponseMessage
                 .builder()
                 .message("User is deleted successfully !!!")
+                .success(true)
                 .status(HttpStatus.OK)
                 .build();
         return new ResponseEntity<>(message, HttpStatus.OK);
@@ -59,20 +62,19 @@ public class UserController {
 
     //get single
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable String userId)
-    {
+    public ResponseEntity<UserDto> getUser(@PathVariable("userId") String userId) {
         return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
     }
 
     //get by email
-    @GetMapping("/email/{userId}")
-    public ResponseEntity<UserDto> getUserByEmail(@PathVariable String userId)
-    {
-        return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
+    @GetMapping("/email/{userEmail}")
+    public ResponseEntity<UserDto> getUserByEmail(@PathVariable String userEmail) {
+        return new ResponseEntity<>(userService.getUserByEmail(userEmail), HttpStatus.OK);
     }
 
     //search user
-    public ResponseEntity<List<UserDto>> searchUser(String keywords)
+    @GetMapping("/search/{keywords}")
+    public ResponseEntity<List<UserDto>> searchUser(@PathVariable  String keywords)
     {
         return  new ResponseEntity<>(userService.searchUser(keywords), HttpStatus.OK);
     }
