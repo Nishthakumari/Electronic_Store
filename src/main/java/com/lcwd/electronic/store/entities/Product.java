@@ -30,7 +30,7 @@ public class Product {
     private String productImageName;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "caategory_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
 
