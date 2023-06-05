@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -25,8 +27,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
+
+        String categoryId = UUID.randomUUID().toString();
+        categoryDto.setCategoryId(categoryId);
+
         Category category = mapper.map(categoryDto, Category.class);
-        return  mapper.map(category, CategoryDto.class);
+        Category category1 = categoryRepository.save(category);
+        return  mapper.map(category1, CategoryDto.class);
     }
 
     @Override
@@ -56,7 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
                 Sort.by(sortBy).descending():Sort.by(sortBy).ascending();
 
 
-        PageRequest pageable =PageRequest.of(pageNo-1, pageSize, sort);
+        PageRequest pageable =PageRequest.of(pageNo, pageSize, sort);
         Page<Category> page = categoryRepository.findAll( pageable);
         PageableResponse<CategoryDto> pageableResponse = Helper.getPageableResponse(page, CategoryDto.class);
         return pageableResponse;
