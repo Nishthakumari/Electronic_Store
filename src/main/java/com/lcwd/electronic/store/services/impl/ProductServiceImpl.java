@@ -10,6 +10,8 @@ import com.lcwd.electronic.store.repositories.CategoryRepository;
 import com.lcwd.electronic.store.repositories.ProductRepository;
 import com.lcwd.electronic.store.services.ProductService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.UUID;
+
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -31,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
     public ProductDto create(ProductDto productDto) {
@@ -132,5 +136,16 @@ public class ProductServiceImpl implements ProductService {
         Product savedProduct = productRepository.save(product);
         return mapper.map(savedProduct, productDto.getClass());
 
+    }
+
+    @Override
+    public ProductDto updateCategory(String productId, String categoryId) {
+        Product product = productRepository.findById(productId).orElseThrow(()-> new ResourceNotFoundException("product with given id not found !!"));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()-> new ResourceNotFoundException("category not found"));
+
+        logger.info("here  .........................................");
+        product.setCategory(category);
+        Product savedProduct = productRepository.save(product);
+        return mapper.map(savedProduct, ProductDto.class);
     }
 }
