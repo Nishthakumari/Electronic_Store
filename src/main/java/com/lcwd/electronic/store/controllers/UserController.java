@@ -9,12 +9,16 @@ import com.lcwd.electronic.store.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -114,4 +118,18 @@ public class UserController {
         return new ResponseEntity<>(imageResponse,HttpStatus.CREATED);
 
     }
+
+    //serve user image
+
+    @GetMapping("/image/{userId}")
+    public void serveUserImage(@PathVariable String  userId, HttpServletResponse response) throws IOException {
+
+        UserDto user = userService.getUserById(userId);
+        InputStream resource  = fileService.getResource(imageUploadPath, user.getImageName());
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(resource, response.getOutputStream());
+
+
+    }
+
 }
