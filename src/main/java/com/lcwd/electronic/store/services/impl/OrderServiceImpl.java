@@ -1,5 +1,6 @@
 package com.lcwd.electronic.store.services.impl;
 
+import com.lcwd.electronic.store.dtos.CreateOrderRequest;
 import com.lcwd.electronic.store.dtos.OrderDto;
 import com.lcwd.electronic.store.dtos.PageableResponse;
 import com.lcwd.electronic.store.entities.*;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,7 +39,10 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public OrderDto createOrder(OrderDto orderDto, String userId, String cartId) {
+    public OrderDto createOrder(CreateOrderRequest orderDto) {
+
+        String userId = orderDto.getUserId();
+        String cartId = orderDto.getCartId();
 
         //fetch user
         User user = userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("user not found"));
@@ -57,8 +62,8 @@ public class OrderServiceImpl implements OrderService {
                 .billingName(orderDto.getBillingName())
                 .billingAddress(orderDto.getBillingAddress())
                 .billingPhone(orderDto.getBillingPhone())
-                .orderedDate(orderDto.getOrderedDate())
-                .deliveredDate(orderDto.getDeliveredDate())
+                .orderedDate(new Date())
+                .deliveredDate(null)
                 .paymentStatus(orderDto.getPaymentStatus())
                 .orderStatus(orderDto.getPaymentStatus())
                 .orderId(UUID.randomUUID().toString())
