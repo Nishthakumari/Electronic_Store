@@ -14,7 +14,10 @@ import com.lcwd.electronic.store.repositories.ProductRepository;
 import com.lcwd.electronic.store.repositories.UserRepository;
 import com.lcwd.electronic.store.services.CartService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+@Service
 public class CartServiceImpl implements CartService {
 
 
@@ -41,6 +45,8 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private CartItemRepository cartItemRepository;
 
+    Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
+
 
     @Override
     public CartDto addItemToCart(String userId, AddItemToCartRequest request) {
@@ -58,7 +64,7 @@ public class CartServiceImpl implements CartService {
         //fetch the user from db
         User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("user not found !!"));
 
-        cartRepository.findByUser(user);
+
 
         Cart cart = null;
 
@@ -76,13 +82,14 @@ public class CartServiceImpl implements CartService {
         //perform cart operations
         //if cart items already present, then update
         AtomicReference<Boolean> updated = new AtomicReference<>();
+        updated.set(false);
         List<CartItem> items = cart.getItems();
         List<CartItem> updatedItems = items.stream().map(item->{
             if(item.getProduct().getProductId().equals(productId))
             {
                 //item already present
                 item.setQuantity(quantity);
-                item.setTotalPrice(quantity*product.getPrice());
+                item.setTotalPrice(quantity*product.getDiscountedPrice());
                 updated.set(true);
 
             }
@@ -96,7 +103,7 @@ public class CartServiceImpl implements CartService {
         if(!updated.get()) {
             CartItem cartItem = CartItem.builder()
                     .quantity(quantity)
-                    .totalPrice(quantity * product.getPrice())
+                    .totalPrice(quantity * product.getDiscountedPrice())
                     .cart(cart)
                     .product(product)
                     .build();
@@ -108,7 +115,9 @@ public class CartServiceImpl implements CartService {
 
         Cart updatedCart = cartRepository.save(cart);
 
-        return mapper.map(cart, CartDto.class);
+        logger.info(String.valueOf(updatedCart));
+
+        return mapper.map(updatedCart, CartDto.class);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.lcwd.electronic.store.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,8 +29,11 @@ public class CartItem {
     private int totalPrice;
 
     //mapping cart
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
+    @JsonBackReference
+    @JsonIgnore
     private Cart cart;
 
 

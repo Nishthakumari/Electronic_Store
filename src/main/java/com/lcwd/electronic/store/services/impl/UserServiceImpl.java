@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
                 Sort.by(sortBy).descending():Sort.by(sortBy).ascending();
 
 
-        PageRequest pageable =PageRequest.of(pageNo-1, pageSize, sort);
+        PageRequest pageable =PageRequest.of(pageNo, pageSize, sort);
 
 
 
