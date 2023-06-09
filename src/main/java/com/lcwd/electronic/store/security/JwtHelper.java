@@ -1,4 +1,4 @@
-package com.jwt.jwtauthentication.helper;
+package com.lcwd.electronic.store.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
