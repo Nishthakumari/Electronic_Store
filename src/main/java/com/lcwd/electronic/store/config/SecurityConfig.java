@@ -38,18 +38,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest()
+//        http.authorizeRequests().anyRequest()
+//                .authenticated()
+//                .and()
+//                .formLogin()
+//                .loginPage("login.html")
+//                .loginProcessingUrl("/process-url")
+//                .defaultSuccessUrl("/dashboard")
+//                .failureUrl("/error")
+//                .and()
+//                .logout()
+//                .logoutUrl("/logout");
+//
+//        return http.build();
+
+        http.csrf()
+                .disable()
+                .cors()
+                .disable()
+                .authorizeRequests()
+                .anyRequest()
                 .authenticated()
                 .and()
-                .formLogin()
-                .loginPage("login.html")
-                .loginProcessingUrl("/process-url")
-                .defaultSuccessUrl("/dashboard")
-                .failureUrl("/error")
-                .and()
-                .logout()
-                .logoutUrl("/logout");
-
+                .httpBasic();
         return http.build();
     }
 
