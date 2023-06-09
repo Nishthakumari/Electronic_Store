@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,6 +36,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Value("${user.profile.image.path}")
     private String imagePath;
 
@@ -44,7 +48,9 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
 
         String userId = UUID.randomUUID().toString();
+        //encoding password
         userDto.setUserId(userId);
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         User user = dtoToEntity(userDto);
         User savedUser = (User) userRepository.save(user);
