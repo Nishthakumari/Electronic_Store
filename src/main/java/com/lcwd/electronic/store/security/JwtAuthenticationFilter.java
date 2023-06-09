@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Component
 public  class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private Logger logger = LoggerFactory.getLogger(OncePerRequestFilter.class);
@@ -48,7 +50,7 @@ public  class JwtAuthenticationFilter extends OncePerRequestFilter {
         {
             token = requestHeader.substring(7);
             try{
-                username = this.helper.getUsernameFromToken(token);
+                username = this.jwtHelper.getUsernameFromToken(token);
 
             }catch(IllegalArgumentException e){
                 logger.info("Inllegal argument while fetching the username");
@@ -81,8 +83,9 @@ public  class JwtAuthenticationFilter extends OncePerRequestFilter {
             }else{
                 logger.info("Validation fails !!");
             }
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
+
 
     }
 }
