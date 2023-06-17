@@ -2,12 +2,12 @@ package com.lcwd.electronic.store.entities;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -41,9 +41,14 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Order> orders = new ArrayList<>();
 
+    @ManyToMany(fetch =  FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<Role> roles = new HashSet<>();
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Set<SimpleGrantedAuthority> authorities = this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toSet());
+        return  authorities;
     }
 
     @Override
